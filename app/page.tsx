@@ -26,7 +26,34 @@ const src = (key:string)=> `/images/egypt-goddess/${IMG[key]}`
 /* ========== 타입 ========== */
 type Key = 'bastet'|'isis'|'maat'|'nephthys'|'sekhmet'|'tefnut'|'serqet'|'hathor'
 
-/* ========== 결과 데이터(풍성 버전) ========== */
+/* ========== 얼굴 크게 보이는 아바타 ========== */
+type AvatarProps = {
+  imgKey:string
+  size:number
+  ringColor:string
+  ringWidth?:number
+  zoom?:number          // 1.0 = 원본, 1.4 = 40% 확대
+  focus?:string         // '50% 20%' 같은 background-position
+}
+function Avatar({imgKey,size,ringColor,ringWidth=6,zoom=1.35,focus='50% 22%'}:AvatarProps){
+  return (
+    <div
+      style={{
+        width:size,height:size,borderRadius:'50%',
+        border:`${ringWidth}px solid ${ringColor}`,
+        boxShadow:'0 8px 24px rgba(0,0,0,.12)',
+        backgroundImage:`url(${src(imgKey)})`,
+        backgroundRepeat:'no-repeat',
+        backgroundPosition:focus,           // 얼굴 쪽으로 포커스
+        backgroundSize:`${zoom*100}%`,      // 확대
+        backgroundColor:'#fff'
+      }}
+      aria-label={imgKey}
+    />
+  )
+}
+
+/* ========== 결과 데이터(코멘트 줄바꿈 포함) ========== */
 const GODDESS: Record<Key, {
   icon:string; name:string; nameEn:string; subtitle:string; tag:string;
   desc:string; personality:string; loveStyle:string; charm:string; tip:string;
@@ -45,12 +72,12 @@ const GODDESS: Record<Key, {
     tip:'자유와 무관심은 달라요. 진심이라면 신호를 분명히!',
     imgKey:'bastet',
     good:[
-      {name:'토트',key:'thoth',desc:'지혜로운 관찰자 — 과몰입이 없어 편안함'},
-      {name:'호루스',key:'horus',desc:'책임감 리더 — 든든한 보호자'}
+      {name:'토트',key:'thoth',desc:'지혜로운 관찰자\n과몰입이 없어 편안함'},
+      {name:'호루스',key:'horus',desc:'책임감 리더\n든든한 보호자'}
     ],
     bad:[
-      {name:'라',key:'ra',desc:'태양신 리더십 — 내 자유에 간섭'},
-      {name:'세트',key:'set',desc:'혼돈의 파워 — 긴장 유발'}
+      {name:'라',key:'ra',desc:'태양신 리더십\n내 자유에 간섭'},
+      {name:'세트',key:'set',desc:'혼돈의 파워\n긴장 유발'}
     ]
   },
   isis:{
@@ -64,12 +91,12 @@ const GODDESS: Record<Key, {
     tip:'“나도 돌봄이 필요해요”라고 말할 용기도 사랑.',
     imgKey:'isis',
     good:[
-      {name:'호루스',key:'horus',desc:'안전과 책임 — 보호자형'},
-      {name:'마아트',key:'maat',desc:'원칙+대화 — 관계 안정'}
+      {name:'호루스',key:'horus',desc:'안전과 책임\n보호자형'},
+      {name:'마아트',key:'maat',desc:'원칙+대화\n관계 안정'}
     ],
     bad:[
-      {name:'세크메트',key:'sekhmet',desc:'뜨거운 전투형 — 감정 소모'},
-      {name:'바스테트',key:'bastet',desc:'자유 우선 — 정서적 격차'}
+      {name:'세크메트',key:'sekhmet',desc:'뜨거운 전투형\n감정 소모'},
+      {name:'바스테트',key:'bastet',desc:'자유 우선\n정서적 격차'}
     ]
   },
   maat:{
@@ -83,12 +110,12 @@ const GODDESS: Record<Key, {
     tip:'사랑엔 정답이 하나가 아니에요. 가끔은 감정으로 움직여보세요.',
     imgKey:'maat',
     good:[
-      {name:'토트',key:'thoth',desc:'이성의 조력 — 대화가 잘 통함'},
-      {name:'이시스',key:'isis',desc:'돌봄과 원칙 — 균형 잡힘'}
+      {name:'토트',key:'thoth',desc:'이성의 조력\n대화가 잘 통함'},
+      {name:'이시스',key:'isis',desc:'돌봄과 원칙\n균형 잡힘'}
     ],
     bad:[
-      {name:'세트',key:'set',desc:'규칙 파괴 — 갈등 유발'},
-      {name:'네프티스',key:'nephthys',desc:'침묵형 — 소통 답답'}
+      {name:'세트',key:'set',desc:'규칙 파괴\n갈등 유발'},
+      {name:'네프티스',key:'nephthys',desc:'침묵형\n소통 답답'}
     ]
   },
   nephthys:{
@@ -102,12 +129,12 @@ const GODDESS: Record<Key, {
     tip:'“괜찮아” 대신 “그때 속상했어” 같은 감정 언어를 꺼내보기.',
     imgKey:'nephthys',
     good:[
-      {name:'아누비스',key:'anubis',desc:'조용한 이해 — 깊은 신뢰'},
-      {name:'바스테트',key:'bastet',desc:'도도+내면 — 서로의 거리를 존중'}
+      {name:'아누비스',key:'anubis',desc:'조용한 이해\n깊은 신뢰'},
+      {name:'바스테트',key:'bastet',desc:'도도+내면\n서로의 거리 존중'}
     ],
     bad:[
-      {name:'세크메트',key:'sekhmet',desc:'감정 폭발 — 상처 위험'},
-      {name:'라',key:'ra',desc:'과한 광명 — 피곤함'}
+      {name:'세크메트',key:'sekhmet',desc:'감정 폭발\n상처 위험'},
+      {name:'라',key:'ra',desc:'과한 광명\n피곤함'}
     ]
   },
   sekhmet:{
@@ -121,12 +148,12 @@ const GODDESS: Record<Key, {
     tip:'모든 전쟁을 이길 필요는 없어요. 때로는 져주는 용기가 사랑.',
     imgKey:'sekhmet',
     good:[
-      {name:'라',key:'ra',desc:'공명하는 태양 — 에너지 상승'},
-      {name:'바스테트',key:'bastet',desc:'쿨한 거리 — 속도조절 도움'}
+      {name:'라',key:'ra',desc:'공명하는 태양\n에너지 상승'},
+      {name:'바스테트',key:'bastet',desc:'쿨한 거리\n속도조절 도움'}
     ],
     bad:[
-      {name:'마아트',key:'maat',desc:'규칙·절제 — 답답함'},
-      {name:'네프티스',key:'nephthys',desc:'내향·침묵 — 오해 커짐'}
+      {name:'마아트',key:'maat',desc:'규칙·절제\n답답함'},
+      {name:'네프티스',key:'nephthys',desc:'내향·침묵\n오해 커짐'}
     ]
   },
   tefnut:{
@@ -140,12 +167,12 @@ const GODDESS: Record<Key, {
     tip:'남의 감정에 잠기지 말 것. 내 기분을 먼저 체크!',
     imgKey:'tefnut',
     good:[
-      {name:'호루스',key:'horus',desc:'안정적인 기류 — 배려 깊음'},
-      {name:'토트',key:'thoth',desc:'분석과 조율 — 싸움 완화'}
+      {name:'호루스',key:'horus',desc:'안정적인 기류\n배려 깊음'},
+      {name:'토트',key:'thoth',desc:'분석과 조율\n싸움 완화'}
     ],
     bad:[
-      {name:'세트',key:'set',desc:'거친 돌파 — 감정 무시'},
-      {name:'세크메트',key:'sekhmet',desc:'불꽃형 — 온도 차 큼'}
+      {name:'세트',key:'set',desc:'거친 돌파\n감정 무시'},
+      {name:'세크메트',key:'sekhmet',desc:'불꽃형\n온도 차 큼'}
     ]
   },
   serqet:{
@@ -159,12 +186,12 @@ const GODDESS: Record<Key, {
     tip:'단호함이 냉정으로 보이지 않게 “나는 네 편” 신호를 주기.',
     imgKey:'serqet',
     good:[
-      {name:'오시리스',key:'osiris',desc:'의리·책임 — 신뢰형'},
-      {name:'마아트',key:'maat',desc:'원칙과 경계 — 서로 존중'}
+      {name:'오시리스',key:'osiris',desc:'의리·책임\n신뢰형'},
+      {name:'마아트',key:'maat',desc:'원칙과 경계\n서로 존중'}
     ],
     bad:[
-      {name:'세트',key:'set',desc:'선 넘는 파괴 — 불신'},
-      {name:'바스테트',key:'bastet',desc:'자유 우선 — 경계 충돌'}
+      {name:'세트',key:'set',desc:'선 넘는 파괴\n불신'},
+      {name:'바스테트',key:'bastet',desc:'자유 우선\n경계 충돌'}
     ]
   },
   hathor:{
@@ -178,12 +205,12 @@ const GODDESS: Record<Key, {
     tip:'기복이 클 땐 잠시 쉼표를.',
     imgKey:'hathor',
     good:[
-      {name:'토트',key:'thoth',desc:'센스있는 서포트 — 예술적 대화'},
-      {name:'이시스',key:'isis',desc:'따뜻한 돌봄 — 감정 합'}
+      {name:'토트',key:'thoth',desc:'센스 있는 서포트\n예술적 대화'},
+      {name:'이시스',key:'isis',desc:'따뜻한 돌봄\n감정 합'}
     ],
     bad:[
-      {name:'세트',key:'set',desc:'분위기 파괴 — 감정 무딤'},
-      {name:'라',key:'ra',desc:'일 중심 — 로맨스 식음'}
+      {name:'세트',key:'set',desc:'분위기 파괴\n감정 무딤'},
+      {name:'라',key:'ra',desc:'일 중심\n로맨스 식음'}
     ]
   }
 }
@@ -220,7 +247,7 @@ const MAP: Key[] = [
   'hathor','isis','maat','nephthys'
 ]
 
-/* ========== 페이지 컴포넌트 ========== */
+/* ========== 페이지 ========== */
 export default function Page(){
   const [stage, setStage] = useState<'cover'|'name'|'quiz'|'result'>('cover')
   const [userName, setUserName] = useState('')
@@ -299,7 +326,10 @@ export default function Page(){
             <p style={resultSubtitle}>{g.subtitle}</p>
           </div>
 
-          <img src={src(g.imgKey)} alt={g.name} style={resultImg} />
+          {/* 메인 결과 이미지도 얼굴 중심 확대 */}
+          <div style={{display:'flex',justifyContent:'center',marginBottom:16}}>
+            <Avatar imgKey={g.imgKey} size={320} ringColor="#ffe0f0" ringWidth={8} zoom={1.22} focus="50% 20%" />
+          </div>
 
           <p style={resultTag}>{g.tag}</p>
 
@@ -332,6 +362,7 @@ export default function Page(){
               ))}
             </div>
           </div>
+
           <div style={matchSection}>
             <h3 style={matchTitle}>⚡ 안 맞는 상대</h3>
             <div style={matchGrid}>
@@ -391,20 +422,19 @@ function getWinner(a:Key[]):Key{
   return Object.entries(s).sort((A,B)=>B[1]-A[1])[0][0] as Key
 }
 
-/* ========== Match 컴포넌트(코멘트+줄바꿈+얼굴중심) ========== */
+/* ========== Match(얼굴 확대 + 줄바꿈 코멘트) ========== */
 function Match({ keyName, label, desc, good }:{
   keyName:string; label:string; desc:string; good?:boolean
 }){
   return (
     <div style={matchItem}>
-      <img
-        src={src(keyName)}
-        alt={label}
-        style={{
-          ...matchImg,
-          border: `4px solid ${good ? '#ffc5d9' : '#d4a5ff'}`,
-          objectPosition:'center top'
-        }}
+      <Avatar
+        imgKey={keyName}
+        size={140}
+        ringColor={good ? '#ffc5d9' : '#d4a5ff'}
+        ringWidth={6}
+        zoom={1.4}
+        focus="50% 22%"
       />
       <div style={matchName}>{label}</div>
       <div style={matchDesc}>{desc}</div>
@@ -420,50 +450,4 @@ const container:React.CSSProperties={
 }
 const coverCard:React.CSSProperties={ background:'white', borderRadius:24, padding:0, maxWidth:600, width:'100%', boxShadow:'0 8px 32px rgba(0,0,0,0.12)', overflow:'hidden' }
 const coverImg:React.CSSProperties={ width:'100%', display:'block', borderRadius:'24px 24px 0 0' }
-const startBtn:React.CSSProperties={ width:'calc(100% - 40px)', margin:'20px', padding:'18px', fontSize:20, fontWeight:'bold', background:'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)', color:'white', border:'none', borderRadius:16, cursor:'pointer', boxShadow:'0 4px 16px rgba(255,154,158,0.4)' }
-
-const nameCard:React.CSSProperties={ background:'white', borderRadius:24, padding:40, maxWidth:440, width:'100%', boxShadow:'0 8px 32px rgba(0,0,0,0.12)', textAlign:'center' }
-const nameTitle:React.CSSProperties={ fontSize:28, fontWeight:'bold', margin:'0 0 8px', background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }
-const nameSubtitle:React.CSSProperties={ fontSize:16, color:'#999', margin:'0 0 32px' }
-const nameInputBox:React.CSSProperties={ width:'100%', padding:'16px 20px', fontSize:18, border:'2px solid #ffd6e7', borderRadius:12, outline:'none', textAlign:'center', marginBottom:20, boxSizing:'border-box' }
-const nameBtn:React.CSSProperties={ width:'100%', padding:'16px', fontSize:18, fontWeight:'bold', background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color:'white', border:'none', borderRadius:12, cursor:'pointer' }
-const nameBtnDisabled:React.CSSProperties={ ...nameBtn, background:'#ddd', cursor:'not-allowed' }
-
-const quizCard:React.CSSProperties={ background:'white', borderRadius:24, padding:'32px 28px', maxWidth:560, width:'100%', boxShadow:'0 8px 32px rgba(0,0,0,0.12)' }
-const progress:React.CSSProperties={ height:8, background:'#f0f0f0', borderRadius:999, overflow:'hidden', marginBottom:12 }
-const progressBar:React.CSSProperties={ height:'100%', background:'linear-gradient(90deg, #a8edea 0%, #fed6e3 100%)', transition:'width 0.3s ease' }
-const progressText:React.CSSProperties={ fontSize:14, color:'#999', textAlign:'center', margin:'0 0 24px' }
-const quizQuestion:React.CSSProperties={ fontSize:22, fontWeight:'bold', color:'#333', marginBottom:24, lineHeight:1.4 }
-const optionGrid:React.CSSProperties={ display:'grid', gap:12 }
-const option:React.CSSProperties={ padding:'18px 20px', fontSize:16, textAlign:'left', background:'linear-gradient(135deg, #ffeef8 0%, #fff9e6 100%)', border:'2px solid transparent', borderRadius:16, cursor:'pointer', transition:'all 0.2s', fontWeight:'500', color:'#444' }
-
-const resultCard:React.CSSProperties={ background:'white', borderRadius:24, padding:'36px 28px', maxWidth:640, width:'100%', boxShadow:'0 8px 32px rgba(0,0,0,0.12)' }
-const resultHeader:React.CSSProperties={ textAlign:'center', marginBottom:24 }
-const resultIcon:React.CSSProperties={ fontSize:48, display:'block', marginBottom:8 }
-const resultTitle:React.CSSProperties={ fontSize:20, fontWeight:'600', color:'#666', margin:'0 0 6px' }
-const resultGoddess:React.CSSProperties={ fontSize:40, fontWeight:'bold', margin:'0 0 10px', background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }
-const resultSubtitle:React.CSSProperties={ fontSize:17, color:'#ff6b9d', fontWeight:'600', margin:0 }
-const resultImg:React.CSSProperties={
-  width:'100%', maxWidth:300, height:300, borderRadius:'50%', objectFit:'cover',
-  objectPosition:'center top', border:'8px solid #ffe0f0', boxShadow:'0 8px 24px rgba(0,0,0,0.15)',
-  display:'block', margin:'16px auto 18px'
-}
-const resultTag:React.CSSProperties={ fontSize:14, color:'#999', textAlign:'center', marginBottom:20 }
-const contentSection:React.CSSProperties={ marginBottom:18, paddingBottom:18, borderBottom:'1px solid #f0f0f0' }
-const sectionTitle:React.CSSProperties={ fontSize:18, fontWeight:'bold', color:'#333', marginBottom:8 }
-const sectionText:React.CSSProperties={ fontSize:15, lineHeight:1.7, color:'#555', margin:0 }
-
-const matchSection:React.CSSProperties={ marginTop:12, marginBottom:24, textAlign:'center' }
-const matchTitle:React.CSSProperties={ fontSize:22, fontWeight:'800', marginBottom:14, color:'#222' }
-const matchGrid:React.CSSProperties={ display:'flex', justifyContent:'center', gap:24, flexWrap:'wrap' }
-
-const matchItem: React.CSSProperties = { textAlign:'center', width:150, marginBottom:8 }
-const matchImg: React.CSSProperties = { width:110, height:110, borderRadius:'50%', objectFit:'cover', marginBottom:8 }
-const matchName: React.CSSProperties = { fontSize:16, fontWeight:700, color:'#333', marginBottom:4 }
-const matchDesc: React.CSSProperties = { fontSize:13, color:'#777', lineHeight:1.4, whiteSpace:'normal', wordBreak:'keep-all', maxWidth:130, margin:'0 auto' }
-
-const actionSection:React.CSSProperties={ display:'flex', flexDirection:'column', gap:12, marginTop:24, paddingTop:20, borderTop:'2px solid #f0f0f0' }
-const retryBtn:React.CSSProperties={ padding:'14px', fontSize:16, fontWeight:'bold', background:'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', color:'#333', border:'none', borderRadius:12, cursor:'pointer', boxShadow:'0 4px 16px rgba(168,237,234,0.3)' }
-const shareButtons:React.CSSProperties={ display:'flex', gap:12 }
-const shareBtn:React.CSSProperties={ flex:1, padding:'12px', fontSize:15, fontWeight:'600', background:'white', color:'#667eea', border:'2px solid #667eea', borderRadius:12, cursor:'pointer' }
-const moreBtn:React.CSSProperties={ padding:'12px', fontSize:15, fontWeight:'600', background:'white', color:'#ff6b9d', border:'2px solid #ff6b9d', borderRadius:12, cursor:'pointer' }
+const startBtn:React.CSSProperties={ width:'calc(100% - 40px)
