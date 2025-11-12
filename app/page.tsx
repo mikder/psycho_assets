@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 
-/* ================= 이미지 매핑 (public/images/egypt-goddess/ 에 파일 존재해야 함) ================= */
+/* ================= 이미지 매핑 ================= */
 const IMG: Record<string,string> = {
   bastet:'bastet.png',
   isis:'isis.jpg',
@@ -27,7 +27,27 @@ const src = (key:string)=> `/images/egypt-goddess/${IMG[key]}`
 type Key = 'bastet'|'isis'|'maat'|'nephthys'|'sekhmet'|'tefnut'|'serqet'|'hathor'
 type PickRec = { k: Key; w: number; i: number }
 
-/* ================= 결과 데이터 (풍성한 설명 + 한글 이름 출력 유지) ================= */
+/* ================= 궁합 코멘트 ================= */
+const MATCH_NOTE: Record<string,string> = {
+  thoth:'지혜와 대화형 — 생각 맞춰줌',
+  horus:'책임감 리더 — 든든한 보호자',
+  ra:'원칙 강한 태양 — 자유와 충돌 주의',
+  set:'경쟁심 강함 — 소모전 위험',
+  osiris:'따뜻한 배려 — 안정감 있는 동반자',
+  anubis:'조용한 충성 — 비밀 지켜줌',
+  atum:'차분한 시초 — 기본에 충실',
+  hapi:'정서적 여유 — 흐름을 맞춰줌',
+  bastet:'자유로운 고양이 — 거리 존중 필요',
+  isis:'헌신 힐러 — 안정 최고',
+  maat:'균형의 판단자 — 룰과 합의 중시',
+  nephthys:'신비의 그림자 — 섬세한 배려',
+  sekhmet:'불꽃 같은 열정 — 속도 조절 필수',
+  tefnut:'감정 조율자 — 분위기 센스 탁월',
+  serqet:'신뢰의 수호 — 배신 금물',
+  hathor:'낭만 크리에이터 — 표현 풍부'
+}
+
+/* ================= 결과 데이터 ================= */
 const GODDESS: Record<Key, {
   icon:string; name:string; nameEn:string; subtitle:string; tag:string;
   desc:string; personality:string; loveStyle:string; charm:string; tip:string;
@@ -139,7 +159,7 @@ const GODDESS: Record<Key, {
   }
 }
 
-/* ================= 질문 12개 (질문은 물음표, 보기(선택지)는 진술형) ================= */
+/* ================= 질문 12개 ================= */
 const Q = [
   ['어떤 데이트가 가장 끌려?', ['사람 적은 바에서 깊은 대화', '감정을 숨기고 천천히 탐색', '처음부터 안정과 돌봄 제공', '강렬하게 리드하며 직진']],
   ['갈등이 생기면 어떻게 풀어?', ['먼저 공감하며 감정을 다독임', '사실과 원인을 정리해 합의점 찾음', '시간을 두고 진정 후 다시 대화', '오해 없게 즉시 솔직하게 직진 대화']],
@@ -155,44 +175,29 @@ const Q = [
   ['한 단어로 사랑을 정의해봐', ['예술', '신념', '조화', '그림자']]
 ] as const
 
-/* ================= 보기→여신 매핑 (8여신 고르게 반영) ================= */
+/* ================= 보기→여신 매핑 + 가중치 ================= */
 const MAP: Key[] = [
-  // Q1
   'hathor','nephthys','isis','sekhmet',
-  // Q2
   'hathor','isis','maat','sekhmet',
-  // Q3
-  'hathor','nephthys','isis','nephthys', // 4번째를 신중 표현→네프티스
-  // Q4
+  'hathor','nephthys','isis','nephthys',
   'bastet','maat','sekhmet','isis',
-  // Q5
   'hathor','isis','maat','nephthys',
-  // Q6
   'hathor','isis','maat','sekhmet',
-  // Q7
   'hathor','isis','maat','nephthys',
-  // Q8  (자유/내면/균형/직진)
   'tefnut','nephthys','maat','sekhmet',
-  // Q9  (표현/안정/몰입/고요)
   'hathor','isis','sekhmet','nephthys',
-  // Q10 (표현/안정/균형/신비)
   'hathor','isis','maat','nephthys',
-  // Q11 (균형/표현/자유/온도조절)
   'maat','hathor','bastet','tefnut',
-  // Q12 (경계/열정/규범/내면)
   'serqet','sekhmet','maat','nephthys'
 ]
-
-/* ================= 가중치: Q1~Q8=2, Q9~Q12=1 ================= */
 const WEIGHT: number[] = [
-  // Q1..Q8 (32개)
-  2,2,2,2,  2,2,2,2,  2,2,2,2,  2,2,2,2,
-  2,2,2,2,  2,2,2,2,  2,2,2,2,  2,2,2,2,
-  // Q9..Q12 (16개)
-  1,1,1,1,  1,1,1,1,  1,1,1,1,  1,1,1,1
+  2,2,2,2, 2,2,2,2, 2,2,2,2,
+  2,2,2,2, 2,2,2,2, 2,2,2,2,
+  2,2,2,2, 2,2,2,2, 1,1,1,1,
+  1,1,1,1, 1,1,1,1, 1,1,1,1
 ]
 
-/* ================= 페이지 (디자인/동작 보존) ================= */
+/* ================= 페이지 ================= */
 export default function Page(){
   const [stage, setStage] = useState<'cover'|'name'|'quiz'|'result'>('cover')
   const [userName, setUserName] = useState('')
@@ -271,30 +276,35 @@ export default function Page(){
             <p style={resultSubtitle}>{g.subtitle}</p>
           </div>
 
-          <img src={src(g.imgKey)} alt={g.name} style={resultImg} />
+          {/* 메인 이미지: 얼굴 중심 확대 원형 크롭 (조금 더 크게) */}
+          <div style={resultImgWrap}>
+            <img src={src(g.imgKey)} alt={g.name} style={resultImgInner} />
+          </div>
+
           <p style={resultTag}>{g.tag}</p>
 
-          <div style={contentSection}>
+          <div style={contentSectionTight}>
             <h3 style={sectionTitle}>🔮 어떤 여신인가요?</h3>
             <p style={sectionText}>{g.desc}</p>
           </div>
-          <div style={contentSection}>
+          <div style={contentSectionTight}>
             <h3 style={sectionTitle}>💫 당신은 이런 사람!</h3>
             <p style={sectionText}>{g.personality}</p>
           </div>
-          <div style={contentSection}>
+          <div style={contentSectionTight}>
             <h3 style={sectionTitle}>💘 당신의 연애 스타일</h3>
             <p style={sectionText}>{g.loveStyle}</p>
           </div>
-          <div style={contentSection}>
+          <div style={contentSectionTight}>
             <h3 style={sectionTitle}>✨ 매력 포인트</h3>
             <p style={sectionText}>{g.charm}</p>
           </div>
-          <div style={contentSection}>
+          <div style={contentSectionTightLast}>
             <h3 style={sectionTitle}>💡 Love Tip</h3>
             <p style={sectionText}>{g.tip}</p>
           </div>
 
+          {/* 궁합 섹션: 썸네일 확대 크롭 + 한 줄 코멘트 */}
           <div style={matchSection}>
             <h3 style={matchTitle}>💞 잘 맞는 상대</h3>
             <div style={matchGrid}>
@@ -366,7 +376,7 @@ export default function Page(){
   )
 }
 
-/* ================= 결과 산정: 가중치 + 최근기여 타이브레이커 (랜덤 없음) ================= */
+/* ================= 결과 산정 ================= */
 function getWinner(a:PickRec[]):Key{
   const s:Record<Key,number>={bastet:0,isis:0,maat:0,nephthys:0,sekhmet:0,tefnut:0,serqet:0,hathor:0}
   a.forEach(p=>{ s[p.k]+=p.w })
@@ -385,19 +395,19 @@ function getWinner(a:PickRec[]):Key{
 
 /* ================= 궁합 아바타 ================= */
 function Match({keyName, label, good}:{keyName:string; label:string; good?:boolean}){
+  const note = MATCH_NOTE[keyName] || ''
   return (
     <div style={matchItem}>
-      <img
-        src={src(keyName)}
-        alt={label}
-        style={{ ...matchImg, border: `4px solid ${good ? '#ffc5d9' : '#d4a5ff'}` }}
-      />
+      <div style={{...matchImgWrap, border: `4px solid ${good ? '#ffc5d9' : '#d4a5ff'}`}}>
+        <img src={src(keyName)} alt={label} style={matchImgInner} />
+      </div>
       <div style={matchName}>{label}</div>
+      {note && <div style={matchNote}>{note}</div>}
     </div>
   )
 }
 
-/* ================= 스타일 (그대로 유지, border 문자열 오류 수정) ================= */
+/* ================= 스타일 ================= */
 const container:React.CSSProperties={
   minHeight:'100vh',
   background:'linear-gradient(135deg, #ffeef8 0%, #fff4e6 50%, #e8f4ff 100%)',
@@ -559,26 +569,26 @@ const resultCard:React.CSSProperties={
 
 const resultHeader:React.CSSProperties={
   textAlign:'center',
-  marginBottom:32
+  marginBottom:28
 }
 
 const resultIcon:React.CSSProperties={
   fontSize:48,
   display:'block',
-  marginBottom:12
+  marginBottom:10
 }
 
 const resultTitle:React.CSSProperties={
   fontSize:22,
   fontWeight:'600',
   color:'#666',
-  margin:'0 0 8px'
+  margin:'0 0 6px'
 }
 
 const resultGoddess:React.CSSProperties={
   fontSize:42,
   fontWeight:'bold',
-  margin:'0 0 12px',
+  margin:'0 0 10px',
   background:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
   WebkitBackgroundClip:'text',
   WebkitTextFillColor:'transparent'
@@ -591,74 +601,101 @@ const resultSubtitle:React.CSSProperties={
   margin:0
 }
 
-const resultImg:React.CSSProperties={
+/* 메인 결과 이미지: 더 크게 + 얼굴 중심 */
+const resultImgWrap:React.CSSProperties={
   width:'100%',
-  maxWidth:280,
-  height:280,
+  maxWidth:320,   // 280 → 320
+  height:320,     // 280 → 320
   borderRadius:'50%',
-  objectFit:'cover',
+  overflow:'hidden',
   border:'6px solid #ffe0f0',
   boxShadow:'0 8px 24px rgba(0,0,0,0.15)',
-  display:'block',
-  margin:'0 auto 24px'
+  margin:'14px auto 18px', // 살짝 압축
+  position:'relative',
+  background:'#fff'
+}
+const resultImgInner:React.CSSProperties={
+  width:'100%',
+  height:'100%',
+  objectFit:'cover',
+  objectPosition:'50% 30%',
+  transform:'scale(1.22)', // 1.18 → 1.22 (얼굴 확대)
+  display:'block'
 }
 
 const resultTag:React.CSSProperties={
   fontSize:15,
   color:'#999',
   textAlign:'center',
-  marginBottom:32
+  marginBottom:20 // 32 → 20 (간격 축소)
 }
 
-const contentSection:React.CSSProperties={
-  marginBottom:28,
-  paddingBottom:28,
+/* 본문 섹션: 간격 축소 */
+const contentSectionTight:React.CSSProperties={
+  marginBottom:16,   // 28 → 16
+  paddingBottom:16,  // 28 → 16
   borderBottom:'1px solid #f0f0f0'
+}
+const contentSectionTightLast:React.CSSProperties={
+  marginBottom:14,
+  paddingBottom:0,
+  borderBottom:'none'
 }
 
 const sectionTitle:React.CSSProperties={
   fontSize:18,
   fontWeight:'bold',
   color:'#333',
-  marginBottom:12
+  marginBottom:8 // 12 → 8
 }
 
 const sectionText:React.CSSProperties={
   fontSize:15,
-  lineHeight:1.8,
+  lineHeight:1.75, // 1.8 → 조금 촘촘
   color:'#555',
   margin:0
 }
 
 const matchSection:React.CSSProperties={
-  marginBottom:32,
+  marginBottom:26, // 32 → 26
   textAlign:'center'
 }
 
 const matchTitle:React.CSSProperties={
   fontSize:20,
   fontWeight:'bold',
-  marginBottom:16,
+  marginBottom:12, // 16 → 12
   color:'#333'
 }
 
 const matchGrid:React.CSSProperties={
   display:'flex',
   justifyContent:'center',
-  gap:20,
+  gap:18,
   flexWrap:'wrap'
 }
 
 const matchItem:React.CSSProperties={
-  textAlign:'center'
+  textAlign:'center',
+  width:150
 }
 
-const matchImg:React.CSSProperties={
-  width:90,
-  height:90,
+/* 썸네일: 얼굴 확대 유지 */
+const matchImgWrap:React.CSSProperties={
+  width:92,
+  height:92,
   borderRadius:'50%',
+  overflow:'hidden',
+  margin:'0 auto 6px',
+  background:'#fff'
+}
+const matchImgInner:React.CSSProperties={
+  width:'100%',
+  height:'100%',
   objectFit:'cover',
-  marginBottom:8
+  objectPosition:'50% 30%',
+  transform:'scale(1.14)',
+  display:'block'
 }
 
 const matchName:React.CSSProperties={
@@ -666,13 +703,19 @@ const matchName:React.CSSProperties={
   fontWeight:'600',
   color:'#555'
 }
+const matchNote:React.CSSProperties={
+  fontSize:12,
+  color:'#777',
+  marginTop:3,
+  lineHeight:1.45
+}
 
 const actionSection:React.CSSProperties={
   display:'flex',
   flexDirection:'column',
-  gap:16,
-  marginTop:40,
-  paddingTop:32,
+  gap:14,           // 16 → 14
+  marginTop:28,     // 40 → 28
+  paddingTop:20,    // 32 → 20
   borderTop:'2px solid #f0f0f0'
 }
 
